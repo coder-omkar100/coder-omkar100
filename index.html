@@ -3,265 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Ball Game</title>
+    <title>Simple Memory Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400&display=swap" rel="stylesheet"> <!-- Pixel font and Roboto -->
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 100vh;
+            font-family: 'Roboto', sans-serif; /* Use Roboto for the body */
+            background-color: #e0f7fa; /* Light blue background */
             margin: 0;
-            background: linear-gradient(135deg, #f3e5ab, #fbbf7b);
-            transition: background-color 0.5s ease;
-            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             padding: 20px;
         }
 
-        h1 {
-            font-size: 36px;
-            margin-bottom: 30px;
-            color: #e67e22;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        .container {
+            display: flex;
+            width: 90vw;
+            max-width: 900px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            background-color: #ffffff; /* White background for contrast */
         }
 
-        #game-container {
-            position: relative;
-            width: 800px; /* Increased width */
-            height: 500px; /* Increased height */
-            border: 4px solid #e67e22;
-            border-radius: 15px;
-            background-color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+        .left-panel {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #ddd;
+        }
+
+        .right-panel {
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        #box {
-            width: 60px; /* Ball size */
-            height: 60px;
-            position: absolute;
-            background-color: #ff4d4d;
-            transition: background-color 0.2s, transform 0.2s;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        #box:hover {
-            cursor: pointer;
-            transform: scale(1.1);
-        }
-
-        #scoreboard {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            padding: 20px; 
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px; 
-            width: 300px; 
-        }
-
-        #scoreboard p {
-            font-size: 20px;
-            margin: 5px 0; 
-            font-weight: bold;
-            color: #333;
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s, transform 0.3s;
-            font-weight: bold;
-            margin-top: 10px; 
-        }
-
-        button:hover {
-            background-color: #d35400; 
-            transform: scale(1.05);
-        }
-
-        #rules {
-            position: relative;
-            width: 240px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 15px; 
-            font-size: 14px;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px; 
-        }
-
-        #rules h2 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #e67e22;
-        }
-
-        #rules p {
-            font-size: 12px;
-            line-height: 1.5;
-            margin: 5px 0;
-        }
-
-        /* Flex container for the layout */
-        .container {
-            display: flex;
-            justify-content: space-between;
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             width: 100%;
         }
 
-        /* Popup message styles */
-        #popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .box {
+            width: 70px;
+            height: 70px;
+            background-color: #dfe6e9;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Press Start 2P', cursive; /* Pixel font for game letters */
+            font-size: 1.5em; /* Adjusted font size */
+            color: transparent;
+            border: 2px solid #b2bec3; /* Light border for better visibility */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .box:hover {
+            background-color: #b2bec3; /* Change color on hover */
+        }
+
+        .box.flipped {
+            background-color: #ffffff; /* White background when flipped */
+            color: #2d3436; /* Show the text color */
+        }
+
+        .box.matched {
+            background-color: #55efc4; /* Color for matched boxes */
+        }
+
+        .start-btn {
+            background-color: #ff6b81; 
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 1000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .start-btn:hover {
+            background-color: #ff4b61;
+        }
+
+        .timer, .best-record {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #2d3436;
+            font-family: 'Roboto', sans-serif; /* Use Roboto for timer and best record */
+        }
+
+        .rules {
+            margin-top: 20px;
+            font-size: 12px; 
             text-align: center;
+            color: #2d3436;
+            font-family: 'Roboto', sans-serif; /* Use Roboto for game rules */
         }
     </style>
 </head>
 <body>
-    <h1>Interactive Ball Game</h1>
-    
+
     <div class="container">
-        <div id="game-container">
-            <div id="box"></div>
+        <div class="left-panel">
+            <button class="start-btn" id="startButton" onclick="startGame()">Start Game</button>
+            <div class="timer" id="timer">Time: 0s</div>
+            <div class="best-record" id="bestRecord">Best Record: --</div>
+            <div class="rules">
+                <strong>Game Rules:</strong><br>
+                Match all pairs in the shortest time. Click two boxes to flip them. Good luck!
+            </div>
         </div>
 
-        <div>
-            <div id="rules">
-                <h2>Game Rules:</h2>
-                <p>1. Click the red ball to score points. Each click gives you 1 point.</p>
-                <p>2. The ball will change color and move after each click.</p>
-                <p>3. The background will also change color randomly after every click.</p>
-                <p>4. You have 30 seconds to score as many points as you can.</p>
-                <p>5. Try to click the ball as quickly as possible to increase your score!</p>
-            </div>
-
-            <div id="scoreboard">
-                <p>Score: <span id="score">0</span></p>
-                <p>Time left: <span id="time">30</span> seconds</p>
-                <p>High Score: <span id="highScore">0</span></p> <!-- Added High Score -->
-                <button id="startBtn">Start Game</button>
-            </div>
+        <div class="right-panel">
+            <div class="game-board" id="gameBoard"></div>
         </div>
     </div>
 
-    <div id="popup">Good Play! Your score is: <span id="finalScore"></span></div> <!-- Popup message -->
-
     <script>
-        const box = document.getElementById('box');
-        const scoreDisplay = document.getElementById('score');
-        const timeDisplay = document.getElementById('time');
-        const startBtn = document.getElementById('startBtn');
-        const highScoreDisplay = document.getElementById('highScore');
-        const popup = document.getElementById('popup');
-        const finalScoreDisplay = document.getElementById('finalScore');
-        let score = 0;
-        let time = 30;
-        let timerId;
-        let highScore = 0; // Initialize high score
+        const gameBoard = document.getElementById('gameBoard');
+        const timerElement = document.getElementById('timer');
+        const bestRecordElement = document.getElementById('bestRecord');
+        const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
+        let flippedBoxes = [];
+        let matchedPairs = 0;
+        let timer = 0;
+        let timerInterval;
+        let bestTime = localStorage.getItem('bestTime') || '--';
 
-        // Array of aesthetically pleasing colors
-        const backgroundColors = [
-            '#f3e5ab', // Light beige
-            '#fbbf7b', // Soft orange
-            '#f8d7a8', // Light peach
-            '#f4c3e0', // Light pink
-            '#f5c7d7', // Soft pink
-            '#f5e1c2', // Light sandy beige
-            '#d3c6c3'  // Soft taupe
-        ];
+        bestRecordElement.textContent = `Best Record: ${bestTime === '--' ? '--' : bestTime + 's'}`;
 
-        // Box click event
-        box.addEventListener('click', () => {
-            if (time > 0) { // Only register clicks if time is greater than 0
-                score++;
-                scoreDisplay.textContent = score;
-
-                // Change the ball's color randomly after each click
-                box.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
-
-                // Move the ball after click
-                moveBox();
-
-                // Change background color with fade effect on each click
-                changeBackgroundColor();
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-        });
+            return array;
+        }
 
-        // Start Game
+        function createBoard() {
+            gameBoard.innerHTML = '';
+            shuffle(cards).forEach(cardValue => {
+                const boxElement = document.createElement('div');
+                boxElement.classList.add('box');
+                boxElement.dataset.value = cardValue;
+
+                boxElement.addEventListener('click', flipBox);
+                
+                gameBoard.appendChild(boxElement);
+            });
+        }
+
         function startGame() {
-            score = 0;
-            time = 30;
-            scoreDisplay.textContent = score;
-            timeDisplay.textContent = time;
+            flippedBoxes = [];
+            matchedPairs = 0;
+            timer = 0;
+            timerElement.textContent = `Time: 0s`;
 
-            // Reset the popup
-            popup.style.display = 'none'; // Hide popup if it was shown
-            highScoreDisplay.textContent = highScore; // Display current high score
+            createBoard();
+            clearInterval(timerInterval);
 
-            moveBox(); // Move the ball when the game starts
-
-            timerId = setInterval(() => {
-                time--;
-                timeDisplay.textContent = time;
-
-                if (time === 0) {
-                    clearInterval(timerId);
-                    if (score > highScore) {
-                        highScore = score; // Update high score
-                        highScoreDisplay.textContent = highScore;
-                    }
-                    finalScoreDisplay.textContent = score;
-                    popup.style.display = 'block'; // Show popup
-                    setTimeout(() => popup.style.display = 'none', 3000); // Hide popup after 3 seconds
-                }
+            timerInterval = setInterval(() => {
+                timer++;
+                timerElement.textContent = `Time: ${timer}s`;
             }, 1000);
         }
 
-        // Function to move the box randomly within the container's boundaries
-        function moveBox() {
-            const containerWidth = document.getElementById('game-container').clientWidth;
-            const containerHeight = document.getElementById('game-container').clientHeight;
-            const boxWidth = box.clientWidth;
-            const boxHeight = box.clientHeight;
+        function flipBox() {
+            if (this.classList.contains('flipped') || this.classList.contains('matched') || flippedBoxes.length === 2) {
+                return;
+            }
 
-            // Make sure the box stays within the container
-            const maxX = containerWidth - boxWidth;
-            const maxY = containerHeight - boxHeight;
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
+            this.classList.add('flipped');
+            this.textContent = this.dataset.value; // Show the value
+            flippedBoxes.push(this);
 
-            box.style.left = `${x}px`;
-            box.style.top = `${y}px`;
+            if (flippedBoxes.length === 2) {
+                checkForMatch();
+            }
         }
 
-        // Change the background color randomly
-        function changeBackgroundColor() {
-            const randomColor = backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
-            document.body.style.backgroundColor = randomColor;
+        function checkForMatch() {
+            const [box1, box2] = flippedBoxes;
+
+            if (box1.dataset.value === box2.dataset.value) {
+                box1.classList.add('matched');
+                box2.classList.add('matched');
+                matchedPairs++;
+
+                if (matchedPairs === cards.length / 2) {
+                    clearInterval(timerInterval);
+                    checkBestRecord(timer);
+                    setTimeout(() => {
+                        alert('You matched all pairs! Game over.');
+                    }, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    box1.classList.remove('flipped');
+                    box2.classList.remove('flipped');
+                    box1.textContent = ''; // Hide the value
+                    box2.textContent = ''; // Hide the value
+                }, 1000);
+            }
+            flippedBoxes = [];
         }
 
-        // Start button event listener
-        startBtn.addEventListener('click', startGame);
+        function checkBestRecord(currentTime) {
+            if (bestTime === '--' || currentTime < bestTime) {
+                bestTime = currentTime;
+                localStorage.setItem('bestTime', bestTime);
+                bestRecordElement.textContent = `Best Record: ${bestTime}s`;
+            }
+        }
     </script>
 </body>
 </html>
